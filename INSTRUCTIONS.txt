@@ -1,0 +1,10 @@
+INSTRUCTIONS
+
+1. Place this folder on a PHP-enabled server (e.g., cPanel, localhost).
+2. To change background image:
+   - Replace 'background.jpg' in /assets/
+3. To update logos:
+   - Replace 'logo1.png' and 'logo2.png' in /assets/
+4. Contact table is in index.php — search for <table> tag.
+5. Inquiry form sends to: info@klpoman.com (change in mail.php)
+6. To make changes live, push the project to your GitHub repository using the README guide.

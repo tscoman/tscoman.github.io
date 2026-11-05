@@ -793,8 +793,10 @@
                     return; 
                 }
 
-                // If the ghost is close enough to its target node, snap and pick a new one
+                // Calculate distance to target node
                 let distToTarget = Math.abs(g.x - g.targetX) + Math.abs(g.y - g.targetY);
+                
+                // Use a slightly larger threshold to account for JS floating point weirdness
                 if (distToTarget < 0.15) {
                     g.x = g.targetX;
                     g.y = g.targetY;
@@ -806,7 +808,7 @@
                         }
                     });
 
-                    // Do not reverse unless it's a dead end
+                    // Do not reverse unless dead end
                     let forward = possible.filter(d => !(d[0] === -g.dx && d[1] === -g.dy));
                     if (forward.length > 0) possible = forward;
                     
@@ -835,14 +837,14 @@
                     g.targetY = g.y + g.dy;
                 }
 
-                // Move ghost towards target smoothly
+                // Move ghost continuously
                 let gSpeed = g.state === 1 ? 0.06 : (0.08 + (level * 0.005));
                 if (g.dx > 0) g.x = Math.min(g.x + gSpeed, g.targetX);
                 if (g.dx < 0) g.x = Math.max(g.x - gSpeed, g.targetX);
                 if (g.dy > 0) g.y = Math.min(g.y + gSpeed, g.targetY);
                 if (g.dy < 0) g.y = Math.max(g.y - gSpeed, g.targetY);
 
-                // Collision
+                // Check collision with Pacman
                 let dist = Math.hypot(g.x - pacman.x, g.y - pacman.y);
                 if (dist < 0.6) {
                     if (g.state === 1) {

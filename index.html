@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tscoman | ML Pipelines</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #e0e0e0;
+            --accent: #4E85BF;
+            --accent-glow: rgba(78, 133, 191, 0.4);
+            --grid: #1a1a1a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .tagline {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 600px;
+            color: #a0a0a0;
+            margin-bottom: 3rem;
+        }
+        .pipeline-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .node {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--grid);
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #666;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .node.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .line {
+            width: 100px; height: 2px;
+            background: var(--grid);
+            position: relative;
+            overflow: hidden;
+        }
+        .line::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            animation: flow 2s infinite linear;
+        }
+        @keyframes flow {
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <section class="hero">
+        <div class="tagline">tscoman</div>
+        <h1>Building competition-ready<br>ML pipelines.</h1>
+        <p class="subtitle">Engineering end-to-end solutions. From raw data ingestion to rigorously validated models.</p>
+        
+        <div class="pipeline-container">
+            <div class="node active">RAW</div>
+            <div class="line"></div>
+            <div class="node">FEAT</div>
+            <div class="line"></div>
+            <div class="node">MODEL</div>
+            <div class="line"></div>
+            <div class="node">VAL</div>
+        </div>
+    </section>
+</body>
+</html>

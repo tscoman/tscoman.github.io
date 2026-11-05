@@ -3,125 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tscoman | ML Pipelines</title>
+    <title>Zeeshan Saeed Paracha | CTO & ML Consultant</title>
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
+            --surface: #0d0d0d;
             --text: #e0e0e0;
+            --text-muted: #888;
             --accent: #4E85BF;
             --accent-glow: rgba(78, 133, 191, 0.4);
-            --grid: #1a1a1a;
+            --grid: #151515;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Inter', -apple-system, sans-serif;
-            overflow-x: hidden;
             line-height: 1.6;
+            overflow-x: hidden;
         }
+        /* Background Grid */
         .grid-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background-image: linear-gradient(var(--grid) 1px, transparent 1px),
                               linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-size: 40px 40px;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.4;
+            mask-image: radial-gradient(circle at top, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at top, black, transparent 80%);
         }
+
+        /* Layout */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Hero Section */
         .hero {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
+            border-bottom: 1px solid var(--grid);
+            position: relative;
         }
-        .tagline {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--accent);
-            margin-bottom: 1rem;
-            font-weight: 600;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            margin-bottom: 1.5rem;
+            width: fit-content;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #4ade80;
+            animation: pulse 2s infinite;
         }
         h1 {
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-size: clamp(3rem, 6vw, 5rem);
             font-weight: 800;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.02em;
-            background: linear-gradient(to right, #fff, #888);
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 30%, #666 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .subtitle {
+        .titles {
             font-size: 1.2rem;
-            max-width: 600px;
-            color: #a0a0a0;
-            margin-bottom: 3rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 2rem;
         }
-        .pipeline-container {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        .node {
-            width: 60px; height: 60px;
-            border-radius: 50%;
-            border: 2px solid var(--grid);
-            background: var(--bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        .titles span { color: var(--accent); font-weight: 600; }
+
+        /* Terminal Box */
+        .terminal {
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            border-radius: 8px;
+            padding: 1.5rem;
             font-family: monospace;
-            font-size: 0.8rem;
-            color: #666;
-            position: relative;
+            font-size: 0.9rem;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .terminal-header {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1rem;
+        }
+        .terminal-header div { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+        .term-line { margin-bottom: 0.5rem; color: #ccc; }
+        .term-prompt { color: var(--accent); }
+        .term-cmd { color: #fff; }
+
+        /* Skills Section */
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .section-title::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--grid);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+        .skill-card {
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            padding: 1.5rem;
+            border-radius: 8px;
             transition: all 0.3s ease;
         }
-        .node.active {
+        .skill-card:hover {
             border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--accent-glow);
         }
-        .line {
-            width: 100px; height: 2px;
-            background: var(--grid);
-            position: relative;
-            overflow: hidden;
+        .skill-card svg {
+            width: 32px; height: 32px;
+            stroke: var(--accent);
+            margin-bottom: 1rem;
         }
-        .line::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            animation: flow 2s infinite linear;
+        .skill-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .skill-card p { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Contact Section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
-        @keyframes flow {
-            100% { left: 100%; }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .contact-item:hover {
+            border-color: var(--accent);
+            background: rgba(78, 133, 191, 0.05);
+        }
+        .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); }
+        .contact-item span { font-size: 0.9rem; font-family: monospace; }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .hero { min-height: 70vh; }
+            .terminal { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="grid-bg"></div>
-    
-    <section class="hero">
-        <div class="tagline">tscoman</div>
-        <h1>Building competition-ready<br>ML pipelines.</h1>
-        <p class="subtitle">Engineering end-to-end solutions. From raw data ingestion to rigorously validated models.</p>
-        
-        <div class="pipeline-container">
-            <div class="node active">RAW</div>
-            <div class="line"></div>
-            <div class="node">FEAT</div>
-            <div class="line"></div>
-            <div class="node">MODEL</div>
-            <div class="line"></div>
-            <div class="node">VAL</div>
-        </div>
-    </section>
+
+    <div class="container">
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                SYSTEM ONLINE
+            </div>
+            <h1>Zeeshan Saeed Paracha</h1>
+            <p class="titles">
+                <span>CTO</span> at OmanWebHosting.com <br>
+                <span>CyberSecurity & ML Consultant</span> at Technology Solutions Company LLC
+            </p>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div style="background:#ff5f56;"></div>
+                    <div style="background:#ffbd2e;"></div>
+                    <div style="background:#27c93f;"></div>
+                </div>
+                <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">whoami</span></div>
+                <div class="term-line" style="color: #888;">Zeeshan Saeed Paracha</div>
+                <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">pwd</span></div>
+                <div class="term-line" style="color: #888;">/home/muscat/oman</div>
+                <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">cat skills.txt</span></div>
+                <div class="term-line" style="color: #888;">[Building competition-ready ML pipelines...]</div>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section>
+            <h2 class="section-title">Core Competencies</h2>
+            <div class="skills-grid">
+                
+                <!-- ML & Kaggle -->
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
+                    <h3>Machine Learning</h3>
+                    <p>End-to-end ML pipelines, Kaggle competitions, feature engineering, and model validation.</p>
+                </div>
+
+                <!-- Cloud Security -->
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" /></svg>
+                    <h3>Cloud Security</h3>
+                    <p>Securing cloud infrastructure, threat modeling, and zero-trust architecture deployment.</p>
+                </div>
+
+                <!-- Server Admin -->
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3.75a3 3 0 003 3h10.5a3 3 0 003-3v-3.75m-13.5 0h13.5m-13.5 0h13.5" /></svg>
+                    <h3>Systems Administration</h3>
+                    <p>VPS management, Nginx optimization, Linux hardening, and server orchestration.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section>
+            <h2 class="section-title">Establish Connection</h2>
+            <div class="contact-grid">
+                <a href="mailto:admin@tscogroup.com" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                    <span>admin@tscogroup.com</span>
+                </a>
+                <a href="mailto:admin@omanwebhosting.com" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                    <span>admin@omanwebhosting.com</span>
+                </a>
+                <a href="https://wa.me/96891914282" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+                    <span>+968 91914282</span>
+                </a>
+                <a href="https://wa.me/96876289000" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+                    <span>+968 76289000</span>
+                </a>
+            </div>
+        </section>
+    </div>
 </body>
 </html>

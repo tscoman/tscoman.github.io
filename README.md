@@ -1,24 +1,27 @@
-# div-tabs-4-homepage
+# Zeeshan Saeed Paracha - Personal Portfolio
 
-Responsive PHP-based homepage with 5 tabbed sections for company use.
+A modern, highly optimized, single-page portfolio designed to showcase technical capabilities in Machine Learning, Cloud Security, and Systems Administration.
 
-## Features
-- Black-themed background
-- 5 sections (Location, Catalogues, Inquiries, Profile)
-- Contact table and inquiry form
-- Responsive design for all devices
+## 🚀 Live Site
+[https://tscoman.github.io](https://tscoman.github.io)
 
-## Setup
-1. Unzip the project folder
-2. Upload to any PHP-enabled hosting
-3. Replace placeholder images in `/assets`
-4. Update contact details in `index.php`
+## 🛠️ Tech Stack
+*   **Frontend:** Pure HTML5, CSS3 (Custom Properties, Grid, Flexbox, Animations).
+*   **Design System:** Dark-theme, technical grid background, terminal-inspired UI.
+*   **Hosting:** GitHub Pages (Static Hosting).
+*   **Deployment:** Managed via Git & SSH from an Oracle Cloud VPS.
 
-## GitHub Deployment
-```bash
-git init
-git remote add origin https://github.com/YOUR_USERNAME/div-tabs-4-homepage.git
-git add .
-git commit -m "Initial commit"
-git push -u origin main
-```
+## 🧠 Core Competencies Featured
+*   **Machine Learning:** End-to-end ML pipelines, Kaggle competitions, feature engineering.
+*   **Cloud Security:** Threat modeling, zero-trust architecture, cloud infrastructure hardening.
+*   **Systems Administration:** VPS management, Nginx optimization, Linux hardening.
+
+## 👨‍💻 Author
+**Zeeshan Saeed Paracha**
+*   CTO at [OmanWebHosting.com](https://omanwebhosting.com)
+*   CyberSecurity & ML Consultant at Technology Solutions Company LLC
+*   Location: Muscat, Oman
+*   Contact: admin@tscogroup.com | +968 91914282
+
+---
+*Note: This repository was previously used for a PHP-based company homepage. It has been fully migrated to a modern static architecture for GitHub Pages.*

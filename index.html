@@ -21,6 +21,9 @@
             font-family: 'Inter', -apple-system, sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .grid-bg {
             position: fixed;
@@ -37,6 +40,8 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 4rem 2rem;
+            flex: 1;
+            width: 100%;
         }
         
         /* Hero Section */
@@ -165,7 +170,7 @@
         }
         .skills-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 5rem;
         }
@@ -215,6 +220,34 @@
         .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); flex-shrink: 0; }
         .contact-item span { font-size: 0.8rem; font-family: monospace; word-break: break-all; }
 
+        /* Footer Links */
+        .footer {
+            border-top: 1px solid var(--grid);
+            padding: 2rem 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: monospace;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .footer a:hover {
+            color: var(--accent);
+        }
+        .footer a svg {
+            width: 16px; height: 16px;
+            stroke: currentColor;
+        }
+
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -252,7 +285,7 @@
                 <div class="term-line" style="color: #888;">[Building competition-ready ML pipelines...]</div>
             </div>
 
-            <!-- NEW LEARNING LOGOS SECTION -->
+            <!-- LEARNING LOGOS SECTION -->
             <div class="learning-section">
                 <div class="learning-label">Continuous Learning & Credentials</div>
                 <div class="logo-grid">
@@ -292,6 +325,7 @@
         <section>
             <h2 class="section-title">Core Competencies</h2>
             <div class="skills-grid">
+                <!-- Row 1 -->
                 <div class="skill-card">
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
                     <h3>Machine Learning</h3>
@@ -306,6 +340,23 @@
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3.75a3 3 0 003 3h10.5a3 3 0 003-3v-3.75m-13.5 0h13.5m-13.5 0h13.5" /></svg>
                     <h3>Systems Administration</h3>
                     <p>VPS management, Nginx optimization, Linux hardening, and server orchestration.</p>
+                </div>
+                
+                <!-- Row 2 -->
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                    <h3>DevSecOps & Automation</h3>
+                    <p>Integrating security into CI/CD pipelines, automated vulnerability scanning, and deployment.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>
+                    <h3>Infrastructure as Code</h3>
+                    <p>Deploying and managing cloud infrastructure using Terraform, Ansible, and scripting.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+                    <h3>Web Hosting & cPanel</h3>
+                    <p>High-availability hosting architecture, cPanel/WHM management, and seamless server migrations.</p>
                 </div>
             </div>
         </section>
@@ -333,5 +384,17 @@
             </div>
         </section>
     </div>
+
+    <!-- FOOTER SECTION -->
+    <footer class="footer">
+        <a href="https://omanwebhosting.com" target="_blank">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+            omanwebhosting.com
+        </a>
+        <a href="https://tscogroup.com" target="_blank">
+            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+            tscogroup.com
+        </a>
+    </footer>
 </body>
 </html>

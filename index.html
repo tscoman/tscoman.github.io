@@ -38,6 +38,8 @@
             margin: 0 auto;
             padding: 4rem 2rem;
         }
+        
+        /* Hero Section */
         .hero {
             min-height: 80vh;
             display: flex;
@@ -67,8 +69,6 @@
             box-shadow: 0 0 10px #4ade80;
             animation: pulse 2s infinite;
         }
-        
-        /* REDUCED FONT SIZE HERE */
         h1 {
             font-size: 2.2rem; 
             font-weight: 800;
@@ -78,7 +78,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
         .titles {
             font-size: 1rem;
             color: var(--text-muted);
@@ -97,6 +96,7 @@
             font-size: 0.9rem;
             max-width: 600px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 3rem;
         }
         .terminal-header {
             display: flex;
@@ -107,6 +107,47 @@
         .term-line { margin-bottom: 0.5rem; color: #ccc; }
         .term-prompt { color: var(--accent); }
         .term-cmd { color: #fff; }
+
+        /* Learning Logos Section */
+        .learning-section {
+            margin-bottom: 5rem;
+        }
+        .learning-label {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .logo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+        .logo-badge:hover {
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        .logo-badge svg {
+            width: 16px; height: 16px;
+            fill: currentColor;
+        }
 
         /* Skills Section */
         .section-title {
@@ -171,7 +212,7 @@
             border-color: var(--accent);
             background: rgba(78, 133, 191, 0.05);
         }
-        .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); }
+        .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); flex-shrink: 0; }
         .contact-item span { font-size: 0.8rem; font-family: monospace; word-break: break-all; }
 
         @keyframes pulse {
@@ -185,6 +226,7 @@
     <div class="grid-bg"></div>
 
     <div class="container">
+        <!-- HERO SECTION -->
         <section class="hero">
             <div class="status-badge">
                 <div class="status-dot"></div>
@@ -209,8 +251,44 @@
                 <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">cat skills.txt</span></div>
                 <div class="term-line" style="color: #888;">[Building competition-ready ML pipelines...]</div>
             </div>
+
+            <!-- NEW LEARNING LOGOS SECTION -->
+            <div class="learning-section">
+                <div class="learning-label">Continuous Learning & Credentials</div>
+                <div class="logo-grid">
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
+                        Google Skills
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        Kaggle
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Credly
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Google Developer
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Red Hat
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Proxmox
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Open Source
+                    </div>
+                </div>
+            </div>
         </section>
 
+        <!-- SKILLS SECTION -->
         <section>
             <h2 class="section-title">Core Competencies</h2>
             <div class="skills-grid">
@@ -232,6 +310,7 @@
             </div>
         </section>
 
+        <!-- CONTACT SECTION -->
         <section>
             <h2 class="section-title">Establish Connection</h2>
             <div class="contact-grid">

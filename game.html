@@ -32,6 +32,7 @@
             color: #888;
         }
         .score { color: #ffdf00; font-weight: bold; }
+        .level { color: #00ff00; font-weight: bold; }
         
         .canvas-container {
             position: relative;
@@ -48,6 +49,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 4px;
@@ -92,7 +94,7 @@
     <div class="game-wrapper">
         <div class="header">
             <span>ZEE-AI_PACKETMAN.EXE</span>
-            <span>SCORE: <span class="score" id="score">0</span></span>
+            <span>LEVEL: <span class="level" id="level">1</span> | SCORE: <span class="score" id="score">0</span></span>
         </div>
         
         <div class="canvas-container">
@@ -112,6 +114,7 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreEl = document.getElementById('score');
+        const levelEl = document.getElementById('level');
         const startOverlay = document.getElementById('startOverlay');
 
         const tileSize = 20;
@@ -138,9 +141,11 @@
 
         let grid = [];
         let score = 0;
+        let level = 1;
         let isPlaying = false;
         let animationId;
         let frightTimer = 0;
+        let pelletsLeft = 0;
 
         let pacman = { x: 9, y: 13, dx: 0, dy: 0, nextDx: 0, nextDy: 0, angle: 0, mouth: 0, mouthDir: 1 };
         
@@ -158,9 +163,7 @@
                 dx: 0, 
                 dy: 0, 
                 state: 0, 
-                respawnTimer: 0,
-                targetX: g.x,
-                targetY: g.y
+                respawnTimer: 0
             }));
         }
 
@@ -171,10 +174,9 @@
         function initGame() {
             grid = [];
             wordIndex = 0;
-            score = 0;
-            scoreEl.innerText = score;
-            pacman.x = 9; pacman.y = 13; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
+            pelletsLeft = 0;
             frightTimer = 0;
+            pacman.x = 9; pacman.y = 13; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
             resetGhosts();
 
             for (let r = 0; r < map.length; r++) {
@@ -183,6 +185,7 @@
                     let char = map[r][c];
                     if (char === '#') row.push(1);
                     else if (char === '.') {
+                        pelletsLeft++;
                         if (c % 6 === 0) {
                             row.push({ type: 2, word: words[wordIndex], color: wordColors[wordIndex], charIndex: 0 });
                             wordIndex = (wordIndex + 1) % words.length;
@@ -195,12 +198,19 @@
                             }
                         }
                     }
-                    else if (char === 'o') row.push(3);
+                    else if (char === 'o') { row.push(3); pelletsLeft++; }
                     else row.push(0);
                 }
                 row.push(1);
                 grid.push(row);
             }
+        }
+
+        function nextLevel() {
+            level++;
+            levelEl.innerText = level;
+            initGame();
+            draw();
         }
 
         initGame();
@@ -261,6 +271,7 @@
                 }
             }
 
+            // Draw Pacman
             ctx.save();
             ctx.translate(pacman.x * tileSize + tileSize/2, pacman.y * tileSize + tileSize/2);
             ctx.rotate(pacman.angle);
@@ -281,6 +292,7 @@
             ctx.fill();
             ctx.restore();
 
+            // Draw Ghosts
             ghosts.forEach(g => {
                 let drawBody = g.state !== 2; 
 
@@ -337,8 +349,8 @@
                 }
             }
 
-            // 2. Move Pacman (Slowed by 20%)
-            let pSpeed = 0.12;
+            // 2. Move Pacman (Speed increases slightly with level)
+            let pSpeed = 0.12 + (level * 0.01);
             let nextX = pacman.x + pacman.dx * pSpeed;
             let nextY = pacman.y + pacman.dy * pSpeed;
             let checkX = Math.round(nextX + (pacman.dx > 0 ? 0.4 : (pacman.dx < 0 ? -0.4 : 0)));
@@ -366,6 +378,12 @@
                 }
                 grid[cy][cx] = 0;
                 scoreEl.innerText = score;
+                pelletsLeft--;
+
+                if (pelletsLeft <= 0) {
+                    nextLevel();
+                    return;
+                }
             }
 
             if (frightTimer > 0) {
@@ -375,7 +393,7 @@
                 }
             }
 
-            // 4. Ghost AI (Completely rewritten)
+            // 4. Ghost AI (Interpolated Movement to prevent freezing)
             ghosts.forEach((g, index) => {
                 if (g.state === 2) {
                     g.respawnTimer--;
@@ -384,17 +402,22 @@
                         g.x = ghostSpawns[index].x;
                         g.y = ghostSpawns[index].y;
                         g.dx = 0; g.dy = 0;
-                        g.targetX = g.x;
-                        g.targetY = g.y;
                     }
                     return; 
                 }
 
-                // If ghost reached its target node, pick a new one
-                let distToTarget = Math.abs(g.x - g.targetX) + Math.abs(g.y - g.targetY);
-                if (distToTarget < 0.1) {
-                    g.x = g.targetX;
-                    g.y = g.targetY;
+                // Interpolated movement: move smoothly towards the center of the next tile
+                let targetX = Math.round(g.x + g.dx * 0.5);
+                let targetY = Math.round(g.y + g.dy * 0.5);
+                
+                // If ghost is very close to a tile center, make a decision
+                let distX = Math.abs(g.x - Math.round(g.x));
+                let distY = Math.abs(g.y - Math.round(g.y));
+                let isCentered = distX < 0.1 && distY < 0.1;
+
+                if (isCentered) {
+                    g.x = Math.round(g.x);
+                    g.y = Math.round(g.y);
                     
                     let possible = [];
                     [[0,-1],[0,1],[-1,0],[1,0]].forEach(dir => {
@@ -412,31 +435,28 @@
                         if (g.state === 1) {
                             nextDir = possible[Math.floor(Math.random() * possible.length)];
                         } else {
-                            if (Math.random() < 0.5) {
+                            // 30% chance to make random move to make it less robotic
+                            if (Math.random() < 0.3) {
+                                nextDir = possible[Math.floor(Math.random() * possible.length)];
+                            } else {
+                                // Chase Pacman
                                 possible.sort((a, b) => {
                                     let distA = Math.hypot((g.x + a[0]) - pacman.x, (g.y + a[1]) - pacman.y);
                                     let distB = Math.hypot((g.x + b[0]) - pacman.x, (g.y + b[1]) - pacman.y);
                                     return distA - distB; 
                                 });
                                 nextDir = possible[0];
-                            } else {
-                                nextDir = possible[Math.floor(Math.random() * possible.length)];
                             }
                         }
                     }
-                    
                     g.dx = nextDir[0]; 
                     g.dy = nextDir[1];
-                    g.targetX = g.x + g.dx;
-                    g.targetY = g.y + g.dy;
                 }
 
-                // Move ghost towards target (Slowed by 20%)
-                let gSpeed = g.state === 1 ? 0.06 : 0.08;
-                if (g.dx > 0) g.x = Math.min(g.x + gSpeed, g.targetX);
-                if (g.dx < 0) g.x = Math.max(g.x - gSpeed, g.targetX);
-                if (g.dy > 0) g.y = Math.min(g.y + gSpeed, g.targetY);
-                if (g.dy < 0) g.y = Math.max(g.y - gSpeed, g.targetY);
+                // Move ghost continuously (Speed increases with level)
+                let gSpeed = g.state === 1 ? 0.06 : (0.08 + (level * 0.005));
+                g.x += g.dx * gSpeed;
+                g.y += g.dy * gSpeed;
 
                 // Check collision with Pacman
                 let dist = Math.hypot(g.x - pacman.x, g.y - pacman.y);

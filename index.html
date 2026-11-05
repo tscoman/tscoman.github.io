@@ -22,7 +22,6 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-        /* Background Grid */
         .grid-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -34,15 +33,11 @@
             mask-image: radial-gradient(circle at top, black, transparent 80%);
             -webkit-mask-image: radial-gradient(circle at top, black, transparent 80%);
         }
-
-        /* Layout */
         .container {
             max-width: 1000px;
             margin: 0 auto;
             padding: 4rem 2rem;
         }
-
-        /* Hero Section */
         .hero {
             min-height: 80vh;
             display: flex;
@@ -72,17 +67,20 @@
             box-shadow: 0 0 10px #4ade80;
             animation: pulse 2s infinite;
         }
+        
+        /* REDUCED FONT SIZE HERE */
         h1 {
-            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-size: 2.2rem; 
             font-weight: 800;
-            letter-spacing: -0.03em;
+            letter-spacing: -0.02em;
             margin-bottom: 1rem;
             background: linear-gradient(135deg, #fff 30%, #666 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
         .titles {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: var(--text-muted);
             max-width: 700px;
             margin-bottom: 2rem;
@@ -112,8 +110,8 @@
 
         /* Skills Section */
         .section-title {
-            font-size: 2rem;
-            margin-bottom: 3rem;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -174,17 +172,12 @@
             background: rgba(78, 133, 191, 0.05);
         }
         .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); }
-        .contact-item span { font-size: 0.9rem; font-family: monospace; }
+        .contact-item span { font-size: 0.85rem; font-family: monospace; word-break: break-all; }
 
-        /* Animations */
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.5; }
             100% { opacity: 1; }
-        }
-        @media (max-width: 768px) {
-            .hero { min-height: 70vh; }
-            .terminal { width: 100%; }
         }
     </style>
 </head>
@@ -192,7 +185,6 @@
     <div class="grid-bg"></div>
 
     <div class="container">
-        <!-- HERO SECTION -->
         <section class="hero">
             <div class="status-badge">
                 <div class="status-dot"></div>
@@ -219,36 +211,27 @@
             </div>
         </section>
 
-        <!-- SKILLS SECTION -->
         <section>
             <h2 class="section-title">Core Competencies</h2>
             <div class="skills-grid">
-                
-                <!-- ML & Kaggle -->
                 <div class="skill-card">
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
                     <h3>Machine Learning</h3>
                     <p>End-to-end ML pipelines, Kaggle competitions, feature engineering, and model validation.</p>
                 </div>
-
-                <!-- Cloud Security -->
                 <div class="skill-card">
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" /></svg>
                     <h3>Cloud Security</h3>
                     <p>Securing cloud infrastructure, threat modeling, and zero-trust architecture deployment.</p>
                 </div>
-
-                <!-- Server Admin -->
                 <div class="skill-card">
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3.75a3 3 0 003 3h10.5a3 3 0 003-3v-3.75m-13.5 0h13.5m-13.5 0h13.5" /></svg>
                     <h3>Systems Administration</h3>
                     <p>VPS management, Nginx optimization, Linux hardening, and server orchestration.</p>
                 </div>
-
             </div>
         </section>
 
-        <!-- CONTACT SECTION -->
         <section>
             <h2 class="section-title">Establish Connection</h2>
             <div class="contact-grid">

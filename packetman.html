@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeeshan Saeed Paracha | CTO & ML Consultant</title>
+    <style>
+        :root {
+            --bg: #050505;
+            --surface: #0d0d0d;
+            --text: #e0e0e0;
+            --text-muted: #888;
+            --accent: #4E85BF;
+            --accent-glow: rgba(78, 133, 191, 0.4);
+            --grid: #151515;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            opacity: 0.4;
+            mask-image: radial-gradient(circle at top, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at top, black, transparent 80%);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            flex: 1;
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid var(--grid);
+            position: relative;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            margin-bottom: 1.5rem;
+            width: fit-content;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #4ade80;
+            animation: pulse 2s infinite;
+        }
+        h1 {
+            font-size: 2.2rem; 
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 30%, #666 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .titles {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+        .titles span { color: var(--accent); font-weight: 600; }
+
+        /* Dual Box Section */
+        .interactive-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        /* Terminal Box */
+        .terminal {
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .terminal-header {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 1rem;
+        }
+        .terminal-header div { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+        .term-line { margin-bottom: 0.5rem; color: #ccc; }
+        .term-prompt { color: var(--accent); }
+        .term-cmd { color: #fff; }
+
+        /* Game Box */
+        .game-container {
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            border-radius: 8px;
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+        }
+        .game-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--grid);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .score, .level { color: var(--accent); font-weight: bold; }
+        
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .start-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+        .start-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+            text-align: center;
+            animation: retroBlink 1.5s infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: rgba(0,0,0,0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        @keyframes retroBlink {
+            0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+            20% { color: #ffff00; text-shadow: 0 0 10px #ffff00; }
+            40% { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+            60% { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
+            80% { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; }
+            100% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        }
+        
+        .game-footer {
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #666;
+            font-family: monospace;
+            border-top: 1px solid var(--grid);
+        }
+
+        /* Learning Logos Section */
+        .learning-section {
+            margin-bottom: 5rem;
+        }
+        .learning-label {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        .logo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ccc;
+            transition: all 0.3s ease;
+        }
+        .logo-badge:hover {
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        .logo-badge svg {
+            width: 14px; height: 14px;
+            fill: currentColor;
+        }
+
+        /* Skills Section */
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .section-title::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--grid);
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+        .skill-card {
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .skill-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
+        .skill-card svg {
+            width: 32px; height: 32px;
+            stroke: var(--accent);
+            margin-bottom: 1rem;
+        }
+        .skill-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .skill-card p { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Contact Section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--surface);
+            border: 1px solid var(--grid);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .contact-item:hover {
+            border-color: var(--accent);
+            background: rgba(78, 133, 191, 0.05);
+            transform: translateY(-2px);
+        }
+        .contact-item svg { width: 24px; height: 24px; stroke: var(--accent); flex-shrink: 0; }
+        .contact-item span { font-size: 0.85rem; font-family: monospace; word-break: break-all; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+
+    <div class="container">
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                SYSTEM ONLINE
+            </div>
+            <h1>Zeeshan Saeed Paracha</h1>
+            <p class="titles">
+                <span>CTO</span> at OmanWebHosting.com <br>
+                <span>CyberSecurity & ML Consultant</span> at Technology Solutions Company LLC
+            </p>
+
+            <div class="interactive-row">
+                <!-- TERMINAL BOX -->
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div style="background:#ff5f56;"></div>
+                        <div style="background:#ffbd2e;"></div>
+                        <div style="background:#27c93f;"></div>
+                    </div>
+                    <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">whoami</span></div>
+                    <div class="term-line" style="color: #888;">Zeeshan Saeed Paracha</div>
+                    <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">pwd</span></div>
+                    <div class="term-line" style="color: #888;">/home/muscat/oman</div>
+                    <div class="term-line"><span class="term-prompt">root@tscogroup:~#</span> <span class="term-cmd">cat skills.txt</span></div>
+                    <div class="term-line" style="color: #888;">[Building competition-ready ML pipelines...]</div>
+                </div>
+
+                <!-- ZEE-AI PACKETMAN GAME -->
+                <div class="game-container">
+                    <div class="game-header">
+                        <span>ZEE-AI_PACKETMAN.EXE</span>
+                        <span>LVL: <span class="level" id="level">1</span> | SCORE: <span class="score" id="score">0</span></span>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="gameCanvas" width="400" height="360"></canvas>
+                        <div class="start-overlay" id="startOverlay">
+                            <div class="start-text">CLICK TO START</div>
+                        </div>
+                    </div>
+                    <div class="game-footer">Design and developed by Zeeshan Saeed Paracha</div>
+                </div>
+            </div>
+
+            <!-- LEARNING LOGOS SECTION -->
+            <div class="learning-section">
+                <div class="learning-label">Continuous Learning & Credentials</div>
+                <div class="logo-grid">
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
+                        Google Skills
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        Kaggle
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Credly
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Google Developer
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Red Hat
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Proxmox
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Open Source
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        AWS
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Microsoft
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Cisco
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Linux Foundation
+                    </div>
+                    <div class="logo-badge">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        CompTIA
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section>
+            <h2 class="section-title">Core Competencies</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
+                    <h3>Machine Learning</h3>
+                    <p>End-to-end ML pipelines, Kaggle competitions, feature engineering, and model validation.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" /></svg>
+                    <h3>Cloud Security</h3>
+                    <p>Securing cloud infrastructure, threat modeling, and zero-trust architecture deployment.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3V6.75a3 3 0 013-3h13.5a3 3 0 013 3v4.5a3 3 0 01-3 3m-13.5 0v3.75a3 3 0 003 3h10.5a3 3 0 003-3v-3.75m-13.5 0h13.5m-13.5 0h13.5" /></svg>
+                    <h3>Systems Administration</h3>
+                    <p>VPS management, Nginx optimization, Linux hardening, and server orchestration.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                    <h3>DevSecOps & Automation</h3>
+                    <p>Integrating security into CI/CD pipelines, automated vulnerability scanning, and deployment.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>
+                    <h3>Infrastructure as Code</h3>
+                    <p>Deploying and managing cloud infrastructure using Terraform, Ansible, and scripting.</p>
+                </div>
+                <div class="skill-card">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+                    <h3>Web Hosting & cPanel</h3>
+                    <p>High-availability hosting architecture, cPanel/WHM management, and seamless server migrations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section>
+            <h2 class="section-title">Establish Connection</h2>
+            <div class="contact-grid">
+                <a href="mailto:admin@tscogroup.com" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                    <span>admin@tscogroup.com</span>
+                </a>
+                <a href="mailto:admin@omanwebhosting.com" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                    <span>admin@omanwebhosting.com</span>
+                </a>
+                <a href="https://wa.me/96891914282" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+                    <span>+968 91914282</span>
+                </a>
+                <a href="https://wa.me/96876289000" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+                    <span>+968 76289000</span>
+                </a>
+                <a href="https://omanwebhosting.com" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+                    <span>omanwebhosting.com</span>
+                </a>
+                <a href="https://tscogroup.com" target="_blank" class="contact-item">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" /></svg>
+                    <span>tscogroup.com</span>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- GAME SCRIPT -->
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const levelEl = document.getElementById('level');
+        const startOverlay = document.getElementById('startOverlay');
+
+        const tileSize = 20;
+        const map = [
+            "####################",
+            "#........#.........#",
+            "#.##.###.#.###.##.#",
+            "#o##.###.#.###.##o#",
+            "#.................#",
+            "#.##.#.#####.#.##.#",
+            "#....#...#...#....#",
+            "####.### # ###.####",
+            "   #.#       #.#   ",
+            "####.# ##-## #.####",
+            "#......#   #......#",
+            "#.##.#.#####.#.##.#",
+            "#o.#...........#.o#",
+            "##.#.#.#####.#.#.##",
+            "#....#...#...#....#",
+            "#.######.#.######.#",
+            "#.................#",
+            "####################"
+        ];
+
+        let grid = [];
+        let score = 0;
+        let level = 1;
+        let isPlaying = false;
+        let animationId;
+        let frightTimer = 0;
+        let pelletsLeft = 0;
+
+        let pacman = { x: 9, y: 13, dx: 0, dy: 0, nextDx: 0, nextDy: 0, angle: 0, mouth: 0, mouthDir: 1 };
+        
+        const ghostSpawns = [
+            { x: 9, y: 8, color: '#ff0000' },
+            { x: 10, y: 8, color: '#ffb8ff' },
+            { x: 9, y: 7, color: '#00ffff' }
+        ];
+
+        let ghosts = [];
+
+        function resetGhosts() {
+            ghosts = ghostSpawns.map(g => ({ 
+                ...g, 
+                dx: 0, 
+                dy: 0, 
+                state: 0, 
+                respawnTimer: 0,
+                targetX: g.x,
+                targetY: g.y
+            }));
+        }
+
+        const words = ["GOOGLE", "KAGGLE", "AWS", "ML", "GCP", "DEV"];
+        const wordColors = ["#4285F4", "#20BEFF", "#FF9900", "#FF00FF", "#00FF00", "#FF5555"];
+        let wordIndex = 0;
+
+        function initGame() {
+            grid = [];
+            wordIndex = 0;
+            pelletsLeft = 0;
+            frightTimer = 0;
+            pacman.x = 9; pacman.y = 13; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
+            resetGhosts();
+
+            for (let r = 0; r < map.length; r++) {
+                let row = [];
+                for (let c = 0; c < map[r].length; c++) {
+                    let char = map[r][c];
+                    if (char === '#') row.push(1);
+                    else if (char === '.') {
+                        pelletsLeft++;
+                        if (c % 6 === 0) {
+                            row.push({ type: 2, word: words[wordIndex], color: wordColors[wordIndex], charIndex: 0 });
+                            wordIndex = (wordIndex + 1) % words.length;
+                        } else {
+                            let prev = row[row.length - 1];
+                            if (prev && typeof prev === 'object' && prev.type === 2 && prev.charIndex < prev.word.length - 1) {
+                                row.push({ type: 2, word: prev.word, color: prev.color, charIndex: prev.charIndex + 1 });
+                            } else {
+                                row.push(2);
+                            }
+                        }
+                    }
+                    else if (char === 'o') { row.push(3); pelletsLeft++; }
+                    else row.push(0);
+                }
+                row.push(1);
+                grid.push(row);
+            }
+        }
+
+        function nextLevel() {
+            level++;
+            levelEl.innerText = level;
+            initGame();
+            draw();
+        }
+
+        initGame();
+        draw(); 
+
+        startOverlay.addEventListener('click', () => {
+            startOverlay.style.display = 'none';
+            isPlaying = true;
+            canvas.focus();
+            if (animationId) cancelAnimationFrame(animationId);
+            gameLoop();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (!isPlaying) return;
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(e.key)) {
+                e.preventDefault();
+            }
+            if (e.key === 'ArrowUp' || e.key === 'w') { pacman.nextDx = 0; pacman.nextDy = -1; pacman.angle = -Math.PI/2; }
+            if (e.key === 'ArrowDown' || e.key === 's') { pacman.nextDx = 0; pacman.nextDy = 1; pacman.angle = Math.PI/2; }
+            if (e.key === 'ArrowLeft' || e.key === 'a') { pacman.nextDx = -1; pacman.nextDy = 0; pacman.angle = Math.PI; }
+            if (e.key === 'ArrowRight' || e.key === 'd') { pacman.nextDx = 1; pacman.nextDy = 0; pacman.angle = 0; }
+        });
+
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let r = 0; r < grid.length; r++) {
+                for (let c = 0; c < grid[r].length; c++) {
+                    let val = grid[r][c];
+                    let x = c * tileSize;
+                    let y = r * tileSize;
+                    
+                    if (val === 1) {
+                        ctx.fillStyle = '#1a1a1a';
+                        ctx.fillRect(x, y, tileSize, tileSize);
+                        ctx.strokeStyle = '#333';
+                        ctx.strokeRect(x, y, tileSize, tileSize);
+                    } else if (val === 3) {
+                        ctx.fillStyle = '#ffdf00';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (val && typeof val === 'object' && val.type === 2) {
+                        ctx.fillStyle = val.color;
+                        ctx.font = "bold 12px monospace";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        let letter = val.word[val.charIndex];
+                        ctx.fillText(letter, x + tileSize/2, y + tileSize/2);
+                    } else if (val === 2) {
+                        ctx.fillStyle = '#666';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Draw Pacman
+            ctx.save();
+            ctx.translate(pacman.x * tileSize + tileSize/2, pacman.y * tileSize + tileSize/2);
+            ctx.rotate(pacman.angle);
+            ctx.fillStyle = '#ffdf00';
+            ctx.beginPath();
+            if(isPlaying) {
+                pacman.mouth += 0.15 * pacman.mouthDir;
+                if (pacman.mouth > 1 || pacman.mouth < 0) pacman.mouthDir *= -1;
+            }
+            let mouthAngle = pacman.mouth * 0.6;
+            ctx.arc(0, 0, tileSize/2 - 1, mouthAngle, Math.PI * 2 - mouthAngle);
+            ctx.lineTo(0, 0);
+            ctx.fill();
+            
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(0, -6, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Draw Ghosts
+            ghosts.forEach(g => {
+                let drawBody = g.state !== 2; 
+
+                ctx.save();
+                ctx.translate(g.x * tileSize + tileSize/2, g.y * tileSize + tileSize/2);
+                
+                if (drawBody) {
+                    if (g.state === 1) {
+                        if (frightTimer < 120 && Math.floor(frightTimer / 15) % 2 === 0) {
+                            ctx.fillStyle = '#fff';
+                        } else {
+                            ctx.fillStyle = '#0000ff';
+                        }
+                    } else {
+                        ctx.fillStyle = g.color;
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(0, -2, tileSize/2 - 2, Math.PI, 0);
+                    ctx.lineTo(tileSize/2 - 2, tileSize/2 - 2);
+                    for(let i=0; i<3; i++) {
+                        ctx.lineTo(tileSize/2 - 2 - (i*4+2), tileSize/2 - 4);
+                        ctx.lineTo(tileSize/2 - 2 - (i*4+4), tileSize/2 - 2);
+                    }
+                    ctx.lineTo(-(tileSize/2 - 2), tileSize/2 - 2);
+                    ctx.fill();
+                }
+                
+                ctx.fillStyle = (g.state === 1 && frightTimer > 120) ? '#ffb8ff' : '#fff';
+                ctx.beginPath(); ctx.arc(-3, -2, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(3, -2, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.arc(-3, -2, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(3, -2, 1.5, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function update() {
+            if (!isPlaying) return;
+
+            // 1. Handle Pacman Input
+            if (pacman.nextDx !== 0 || pacman.nextDy !== 0) {
+                if (Math.abs(pacman.x - Math.round(pacman.x)) < 0.2 && Math.abs(pacman.y - Math.round(pacman.y)) < 0.2) {
+                    let turnX = Math.round(pacman.x) + pacman.nextDx;
+                    let turnY = Math.round(pacman.y) + pacman.nextDy;
+                    if (grid[turnY] && grid[turnY][turnX] !== 1) {
+                        pacman.x = Math.round(pacman.x);
+                        pacman.y = Math.round(pacman.y);
+                        pacman.dx = pacman.nextDx;
+                        pacman.dy = pacman.nextDy;
+                        pacman.nextDx = 0; pacman.nextDy = 0;
+                    }
+                }
+            }
+
+            // 2. Move Pacman
+            let pSpeed = 0.12 + (level * 0.01);
+            let nextX = pacman.x + pacman.dx * pSpeed;
+            let nextY = pacman.y + pacman.dy * pSpeed;
+            let checkX = Math.round(nextX + (pacman.dx > 0 ? 0.4 : (pacman.dx < 0 ? -0.4 : 0)));
+            let checkY = Math.round(nextY + (pacman.dy > 0 ? 0.4 : (pacman.dy < 0 ? -0.4 : 0)));
+
+            if (grid[checkY] && grid[checkY][checkX] !== 1) {
+                pacman.x = nextX;
+                pacman.y = nextY;
+            } else {
+                if (pacman.dx !== 0) pacman.x = Math.round(pacman.x);
+                if (pacman.dy !== 0) pacman.y = Math.round(pacman.y);
+                pacman.dx = 0; pacman.dy = 0;
+            }
+
+            // 3. Eat Pellets
+            let cx = Math.round(pacman.x);
+            let cy = Math.round(pacman.y);
+            if (grid[cy] && grid[cy][cx] !== 1 && grid[cy][cx] !== 0) {
+                if (grid[cy][cx] === 2 || (grid[cy][cx] && grid[cy][cx].type === 2)) {
+                    score += 10;
+                } else if (grid[cy][cx] === 3) {
+                    score += 50;
+                    frightTimer = 360; 
+                    ghosts.forEach(g => { if(g.state === 0) g.state = 1; });
+                }
+                grid[cy][cx] = 0;
+                scoreEl.innerText = score;
+                pelletsLeft--;
+
+                if (pelletsLeft <= 0) {
+                    nextLevel();
+                    return;
+                }
+            }
+
+            if (frightTimer > 0) {
+                frightTimer--;
+                if (frightTimer === 0) {
+                    ghosts.forEach(g => { if(g.state === 1) g.state = 0; });
+                }
+            }
+
+            // 4. Ghost AI (Look-Ahead Node System)
+            ghosts.forEach((g, index) => {
+                if (g.state === 2) {
+                    g.respawnTimer--;
+                    if (g.respawnTimer <= 0) {
+                        g.state = 0;
+                        g.x = ghostSpawns[index].x;
+                        g.y = ghostSpawns[index].y;
+                        g.dx = 0; g.dy = 0;
+                        g.targetX = g.x;
+                        g.targetY = g.y;
+                    }
+                    return; 
+                }
+
+                // Calculate distance to target node
+                let distToTarget = Math.abs(g.x - g.targetX) + Math.abs(g.y - g.targetY);
+                
+                // Use a slightly larger threshold to account for JS floating point weirdness
+                if (distToTarget < 0.15) {
+                    g.x = g.targetX;
+                    g.y = g.targetY;
+                    
+                    let possible = [];
+                    [[0,-1],[0,1],[-1,0],[1,0]].forEach(dir => {
+                        if (grid[g.y+dir[1]] && grid[g.y+dir[1]][g.x+dir[0]] !== 1) {
+                            possible.push(dir);
+                        }
+                    });
+
+                    // Do not reverse unless dead end
+                    let forward = possible.filter(d => !(d[0] === -g.dx && d[1] === -g.dy));
+                    if (forward.length > 0) possible = forward;
+                    
+                    let nextDir = possible[0];
+
+                    if (possible.length > 0) {
+                        if (g.state === 1) {
+                            nextDir = possible[Math.floor(Math.random() * possible.length)];
+                        } else {
+                            if (Math.random() < 0.3) {
+                                nextDir = possible[Math.floor(Math.random() * possible.length)];
+                            } else {
+                                possible.sort((a, b) => {
+                                    let distA = Math.hypot((g.x + a[0]) - pacman.x, (g.y + a[1]) - pacman.y);
+                                    let distB = Math.hypot((g.x + b[0]) - pacman.x, (g.y + b[1]) - pacman.y);
+                                    return distA - distB; 
+                                });
+                                nextDir = possible[0];
+                            }
+                        }
+                    }
+                    
+                    g.dx = nextDir[0]; 
+                    g.dy = nextDir[1];
+                    g.targetX = g.x + g.dx;
+                    g.targetY = g.y + g.dy;
+                }
+
+                // Move ghost continuously
+                let gSpeed = g.state === 1 ? 0.06 : (0.08 + (level * 0.005));
+                if (g.dx > 0) g.x = Math.min(g.x + gSpeed, g.targetX);
+                if (g.dx < 0) g.x = Math.max(g.x - gSpeed, g.targetX);
+                if (g.dy > 0) g.y = Math.min(g.y + gSpeed, g.targetY);
+                if (g.dy < 0) g.y = Math.max(g.y - gSpeed, g.targetY);
+
+                // Check collision with Pacman
+                let dist = Math.hypot(g.x - pacman.x, g.y - pacman.y);
+                if (dist < 0.6) {
+                    if (g.state === 1) {
+                        score += 200;
+                        scoreEl.innerText = score;
+                        g.state = 2;
+                        g.respawnTimer = 180;
+                        g.dx = 0; g.dy = 0;
+                    } else if (g.state === 0) {
+                        pacman.x = 9;
+                        pacman.y = 13;
+                        pacman.dx = 0; pacman.dy = 0;
+                        pacman.nextDx = 0; pacman.nextDy = 0;
+                    }
+                }
+            });
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            if (isPlaying) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+    </script>
+</body>
+</html>

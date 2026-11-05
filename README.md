@@ -1,27 +1,26 @@
-# Zeeshan Saeed Paracha - Personal Portfolio
+# 🕹️ ZEE-AI PACKETMAN
 
-A modern, highly optimized, single-page portfolio designed to showcase technical capabilities in Machine Learning, Cloud Security, and Systems Administration.
+A lightweight, fully playable Pac-Man clone built entirely in **vanilla HTML, CSS, and JavaScript**. No external libraries, no frameworks, and no image assets—everything is drawn dynamically on the HTML5 Canvas.
 
-## 🚀 Live Site
-[https://tscoman.github.io](https://tscoman.github.io)
+## 🚀 Play the Game
+You can play the game directly in your browser here:
+👉 **[https://tscoman.github.io/packetman.html](https://tscoman.github.io/packetman.html)**
+
+## 🧠 Features
+*   **Retro Arcade Gameplay:** Smooth tile-based movement with buffered turning (just like the original).
+*   **Custom Pellets:** Eat letters spelling out tech brands (GOOGLE, KAGGLE, AWS, ML, etc.).
+*   **Power Pellets:** Eat the big yellow dots to turn ghosts blue, hunt them down for 200 points, and watch them respawn.
+*   **Level Progression:** Clear the board to advance to the next level. Ghosts get faster, and you must stay sharp!
+*   **Responsive Design:** Fits perfectly into a modern, dark-themed UI.
 
 ## 🛠️ Tech Stack
-*   **Frontend:** Pure HTML5, CSS3 (Custom Properties, Grid, Flexbox, Animations).
-*   **Design System:** Dark-theme, technical grid background, terminal-inspired UI.
-*   **Hosting:** GitHub Pages (Static Hosting).
-*   **Deployment:** Managed via Git & SSH from an Oracle Cloud VPS.
-
-## 🧠 Core Competencies Featured
-*   **Machine Learning:** End-to-end ML pipelines, Kaggle competitions, feature engineering.
-*   **Cloud Security:** Threat modeling, zero-trust architecture, cloud infrastructure hardening.
-*   **Systems Administration:** VPS management, Nginx optimization, Linux hardening.
+*   **HTML5 Canvas:** For rendering the maze, characters, and animations.
+*   **Vanilla JavaScript:** For the game loop, collision detection, and ghost AI (Look-Ahead Node System).
+*   **CSS3:** For the styling, blinking start screen, and layout.
 
 ## 👨‍💻 Author
-**Zeeshan Saeed Paracha**
+**Design and developed by Zeeshan Saeed Paracha**
 *   CTO at [OmanWebHosting.com](https://omanwebhosting.com)
 *   CyberSecurity & ML Consultant at Technology Solutions Company LLC
-*   Location: Muscat, Oman
-*   Contact: admin@tscogroup.com | +968 91914282
 
----
-*Note: This repository was previously used for a PHP-based company homepage. It has been fully migrated to a modern static architecture for GitHub Pages.*
+*Feel free to fork this repository, learn from the code, or modify it to create your own arcade games!*

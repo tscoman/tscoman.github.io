@@ -91,7 +91,7 @@
         }
         .titles span { color: var(--accent); font-weight: 600; }
 
-        /* Dual Box Section (Terminal + Game) */
+        /* Dual Box Section */
         .interactive-row {
             display: flex;
             gap: 1.5rem;
@@ -545,7 +545,9 @@
                 dx: 0, 
                 dy: 0, 
                 state: 0, 
-                respawnTimer: 0
+                respawnTimer: 0,
+                targetX: g.x,
+                targetY: g.y
             }));
         }
 
@@ -776,7 +778,7 @@
                 }
             }
 
-            // 4. Ghost AI (Interpolated)
+            // 4. Ghost AI (Look-Ahead Node System)
             ghosts.forEach((g, index) => {
                 if (g.state === 2) {
                     g.respawnTimer--;
@@ -785,17 +787,17 @@
                         g.x = ghostSpawns[index].x;
                         g.y = ghostSpawns[index].y;
                         g.dx = 0; g.dy = 0;
+                        g.targetX = g.x;
+                        g.targetY = g.y;
                     }
                     return; 
                 }
 
-                let distX = Math.abs(g.x - Math.round(g.x));
-                let distY = Math.abs(g.y - Math.round(g.y));
-                let isCentered = distX < 0.1 && distY < 0.1;
-
-                if (isCentered) {
-                    g.x = Math.round(g.x);
-                    g.y = Math.round(g.y);
+                // If the ghost is close enough to its target node, snap and pick a new one
+                let distToTarget = Math.abs(g.x - g.targetX) + Math.abs(g.y - g.targetY);
+                if (distToTarget < 0.15) {
+                    g.x = g.targetX;
+                    g.y = g.targetY;
                     
                     let possible = [];
                     [[0,-1],[0,1],[-1,0],[1,0]].forEach(dir => {
@@ -804,10 +806,11 @@
                         }
                     });
 
+                    // Do not reverse unless it's a dead end
                     let forward = possible.filter(d => !(d[0] === -g.dx && d[1] === -g.dy));
                     if (forward.length > 0) possible = forward;
                     
-                    let nextDir = g.dx !== 0 || g.dy !== 0 ? [g.dx, g.dy] : possible[0];
+                    let nextDir = possible[0];
 
                     if (possible.length > 0) {
                         if (g.state === 1) {
@@ -825,14 +828,21 @@
                             }
                         }
                     }
+                    
                     g.dx = nextDir[0]; 
                     g.dy = nextDir[1];
+                    g.targetX = g.x + g.dx;
+                    g.targetY = g.y + g.dy;
                 }
 
+                // Move ghost towards target smoothly
                 let gSpeed = g.state === 1 ? 0.06 : (0.08 + (level * 0.005));
-                g.x += g.dx * gSpeed;
-                g.y += g.dy * gSpeed;
+                if (g.dx > 0) g.x = Math.min(g.x + gSpeed, g.targetX);
+                if (g.dx < 0) g.x = Math.max(g.x - gSpeed, g.targetX);
+                if (g.dy > 0) g.y = Math.min(g.y + gSpeed, g.targetY);
+                if (g.dy < 0) g.y = Math.max(g.y - gSpeed, g.targetY);
 
+                // Collision
                 let dist = Math.hypot(g.x - pacman.x, g.y - pacman.y);
                 if (dist < 0.6) {
                     if (g.state === 1) {

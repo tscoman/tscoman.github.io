@@ -43,11 +43,10 @@
             display: block;
         }
 
-        /* Retro Overlay */
         .start-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Less opaque so maze is visible */
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -146,20 +145,37 @@
         let pacman = { x: 9, y: 13, dx: 0, dy: 0, nextDx: 0, nextDy: 0, angle: 0, mouth: 0, mouthDir: 1 };
         
         const ghostSpawns = [
-            { x: 9, y: 8, color: '#ff0000' },
-            { x: 10, y: 8, color: '#ffb8ff' },
-            { x: 9, y: 7, color: '#00ffff' }
+            { x: 9, y: 8, color: '#ff0000' }, // Red
+            { x: 10, y: 8, color: '#ffb8ff' }, // Pink
+            { x: 9, y: 7, color: '#00ffff' }  // Cyan
         ];
 
-        let ghosts = JSON.parse(JSON.stringify(ghostSpawns)).map(g => ({...g, dx: 0, dy: 0}));
+        // Ghost states: 0 = Normal, 1 = Frightened, 2 = Eaten (Dead)
+        let ghosts = [];
+
+        function resetGhosts() {
+            ghosts = ghostSpawns.map(g => ({ 
+                ...g, 
+                dx: 0, 
+                dy: 0, 
+                state: 0, 
+                respawnTimer: 0 
+            }));
+        }
 
         const words = ["GOOGLE", "KAGGLE", "AWS", "ML", "GCP", "DEV"];
         const wordColors = ["#4285F4", "#20BEFF", "#FF9900", "#FF00FF", "#00FF00", "#FF5555"];
         let wordIndex = 0;
 
-        function initGrid() {
+        function initGame() {
             grid = [];
             wordIndex = 0;
+            score = 0;
+            scoreEl.innerText = score;
+            pacman.x = 9; pacman.y = 13; pacman.dx = 0; pacman.dy = 0; pacman.nextDx = 0; pacman.nextDy = 0;
+            frightTimer = 0;
+            resetGhosts();
+
             for (let r = 0; r < map.length; r++) {
                 let row = [];
                 for (let c = 0; c < map[r].length; c++) {
@@ -187,7 +203,7 @@
         }
 
         // Init and draw static board BEFORE clicking start
-        initGrid();
+        initGame();
         draw(); 
 
         startOverlay.addEventListener('click', () => {
@@ -213,6 +229,7 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Draw Maze
             for (let r = 0; r < grid.length; r++) {
                 for (let c = 0; c < grid[r].length; c++) {
                     let val = grid[r][c];
@@ -269,30 +286,37 @@
 
             // Draw Ghosts
             ghosts.forEach(g => {
+                // If eaten, don't draw the body, just the eyes
+                let drawBody = g.state !== 2; 
+
                 ctx.save();
                 ctx.translate(g.x * tileSize + tileSize/2, g.y * tileSize + tileSize/2);
                 
-                if (frightTimer > 0) {
-                    if (frightTimer < 120 && Math.floor(frightTimer / 15) % 2 === 0) {
-                        ctx.fillStyle = '#fff';
+                if (drawBody) {
+                    if (g.state === 1) {
+                        // Frightened blink effect
+                        if (frightTimer < 120 && Math.floor(frightTimer / 15) % 2 === 0) {
+                            ctx.fillStyle = '#fff';
+                        } else {
+                            ctx.fillStyle = '#0000ff';
+                        }
                     } else {
-                        ctx.fillStyle = '#0000ff';
+                        ctx.fillStyle = g.color;
                     }
-                } else {
-                    ctx.fillStyle = g.color;
-                }
 
-                ctx.beginPath();
-                ctx.arc(0, -2, tileSize/2 - 2, Math.PI, 0);
-                ctx.lineTo(tileSize/2 - 2, tileSize/2 - 2);
-                for(let i=0; i<3; i++) {
-                    ctx.lineTo(tileSize/2 - 2 - (i*4+2), tileSize/2 - 4);
-                    ctx.lineTo(tileSize/2 - 2 - (i*4+4), tileSize/2 - 2);
+                    ctx.beginPath();
+                    ctx.arc(0, -2, tileSize/2 - 2, Math.PI, 0);
+                    ctx.lineTo(tileSize/2 - 2, tileSize/2 - 2);
+                    for(let i=0; i<3; i++) {
+                        ctx.lineTo(tileSize/2 - 2 - (i*4+2), tileSize/2 - 4);
+                        ctx.lineTo(tileSize/2 - 2 - (i*4+4), tileSize/2 - 2);
+                    }
+                    ctx.lineTo(-(tileSize/2 - 2), tileSize/2 - 2);
+                    ctx.fill();
                 }
-                ctx.lineTo(-(tileSize/2 - 2), tileSize/2 - 2);
-                ctx.fill();
                 
-                ctx.fillStyle = frightTimer > 0 ? '#ffb8ff' : '#fff';
+                // Draw Eyes
+                ctx.fillStyle = (g.state === 1 && frightTimer > 120) ? '#ffb8ff' : '#fff';
                 ctx.beginPath(); ctx.arc(-3, -2, 3, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(3, -2, 3, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = '#000';
@@ -305,6 +329,7 @@
         function update() {
             if (!isPlaying) return;
 
+            // 1. Handle Pacman Input/Turning
             if (pacman.nextDx !== 0 || pacman.nextDy !== 0) {
                 if (Math.abs(pacman.x - Math.round(pacman.x)) < 0.2 && Math.abs(pacman.y - Math.round(pacman.y)) < 0.2) {
                     let turnX = Math.round(pacman.x) + pacman.nextDx;
@@ -319,6 +344,7 @@
                 }
             }
 
+            // 2. Move Pacman (with wall collision)
             let nextX = pacman.x + pacman.dx * 0.15;
             let nextY = pacman.y + pacman.dy * 0.15;
             let checkX = Math.round(nextX + (pacman.dx > 0 ? 0.4 : (pacman.dx < 0 ? -0.4 : 0)));
@@ -333,6 +359,7 @@
                 pacman.dx = 0; pacman.dy = 0;
             }
 
+            // 3. Eat Pellets
             let cx = Math.round(pacman.x);
             let cy = Math.round(pacman.y);
             if (grid[cy] && grid[cy][cx] !== 1 && grid[cy][cx] !== 0) {
@@ -340,7 +367,8 @@
                     score += 10;
                 } else if (grid[cy][cx] === 3) {
                     score += 50;
-                    frightTimer = 360;
+                    frightTimer = 360; // 6 seconds
+                    ghosts.forEach(g => { if(g.state === 0) g.state = 1; });
                 }
                 grid[cy][cx] = 0;
                 scoreEl.innerText = score;
@@ -348,9 +376,26 @@
 
             if (frightTimer > 0) {
                 frightTimer--;
+                if (frightTimer === 0) {
+                    ghosts.forEach(g => { if(g.state === 1) g.state = 0; });
+                }
             }
 
+            // 4. Ghost AI and Movement
             ghosts.forEach((g, index) => {
+                // Handle Eaten Ghosts Respawn
+                if (g.state === 2) {
+                    g.respawnTimer--;
+                    if (g.respawnTimer <= 0) {
+                        g.state = 0;
+                        g.x = ghostSpawns[index].x;
+                        g.y = ghostSpawns[index].y;
+                        g.dx = 0; g.dy = 0;
+                    }
+                    return; // Dead ghosts don't move
+                }
+
+                // If perfectly aligned with grid, make a new direction decision
                 if (Math.abs(g.x - Math.round(g.x)) < 0.1 && Math.abs(g.y - Math.round(g.y)) < 0.1) {
                     g.x = Math.round(g.x); 
                     g.y = Math.round(g.y);
@@ -362,43 +407,56 @@
                         }
                     });
 
+                    // Don't reverse direction unless it's the only option
                     let forward = possible.filter(d => !(d[0] === -g.dx && d[1] === -g.dy));
                     if (forward.length > 0) possible = forward;
                     
-                    if (frightTimer > 0) {
-                        possible.sort((a, b) => {
-                            let distA = Math.hypot((g.x + a[0]) - pacman.x, (g.y + a[1]) - pacman.y);
-                            let distB = Math.hypot((g.x + b[0]) - pacman.x, (g.y + b[1]) - pacman.y);
-                            return distB - distA;
-                        });
-                    }
-
-                    if (possible.length > 0) {
-                        let dir = (Math.random() < 0.2) ? possible[Math.floor(Math.random() * possible.length)] : possible[0];
-                        g.dx = dir[0]; 
-                        g.dy = dir[1];
+                    // If frightened, pick a random path
+                    if (g.state === 1) {
+                        if (possible.length > 0) {
+                            let dir = possible[Math.floor(Math.random() * possible.length)];
+                            g.dx = dir[0]; 
+                            g.dy = dir[1];
+                        }
                     } else {
-                        g.dx = 0; 
-                        g.dy = 0;
+                        // Normal: 50% chance to chase, 50% chance to wander randomly
+                        if (Math.random() < 0.5 && possible.length > 0) {
+                             possible.sort((a, b) => {
+                                let distA = Math.hypot((g.x + a[0]) - pacman.x, (g.y + a[1]) - pacman.y);
+                                let distB = Math.hypot((g.x + b[0]) - pacman.x, (g.y + b[1]) - pacman.y);
+                                return distA - distB; // Shortest distance first
+                            });
+                            g.dx = possible[0][0]; 
+                            g.dy = possible[0][1];
+                        } else if (possible.length > 0) {
+                            let dir = possible[Math.floor(Math.random() * possible.length)];
+                            g.dx = dir[0]; 
+                            g.dy = dir[1];
+                        }
                     }
                 }
 
-                let speed = frightTimer > 0 ? 0.05 : 0.1;
+                // Move ghost
+                let speed = g.state === 1 ? 0.05 : 0.1;
                 g.x += g.dx * speed;
                 g.y += g.dy * speed;
 
+                // Check collision with Pacman
                 let dist = Math.hypot(g.x - pacman.x, g.y - pacman.y);
-                if (dist < 0.5) {
-                    if (frightTimer > 0) {
+                if (dist < 0.6) {
+                    if (g.state === 1) {
+                        // Eat ghost
                         score += 200;
                         scoreEl.innerText = score;
-                        g.x = ghostSpawns[index].x;
-                        g.y = ghostSpawns[index].y;
+                        g.state = 2; // Mark as eaten
+                        g.respawnTimer = 180; // 3 seconds
                         g.dx = 0; g.dy = 0;
-                    } else {
+                    } else if (g.state === 0) {
+                        // Pacman dies -> reset position
                         pacman.x = 9;
                         pacman.y = 13;
                         pacman.dx = 0; pacman.dy = 0;
+                        pacman.nextDx = 0; pacman.nextDy = 0;
                     }
                 }
             });

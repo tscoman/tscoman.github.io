@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Pac-Man Test</title>
+    <title>ZEE-AI PACKETMAN</title>
     <style>
         body {
             background-color: #050505;
@@ -43,7 +43,7 @@
 
     <div class="game-wrapper">
         <div class="header">
-            <span>AI_PACMAN.EXE</span>
+            <span>ZEE-AI_PACKETMAN.EXE</span>
             <span>SCORE: <span class="score" id="score">0</span></span>
         </div>
         <canvas id="gameCanvas" width="400" height="360" tabindex="1"></canvas>
@@ -87,21 +87,37 @@
             { x: 9, y: 7, dx: 0, dy: 0, color: '#00ffff' }
         ];
 
+        // Word definitions for the pellets
+        const words = ["GOOGLE", "KAGGLE", "AWS", "ML", "GCP", "DEV"];
+        const wordColors = ["#4285F4", "#20BEFF", "#FF9900", "#FF00FF", "#00FF00", "#FF5555"];
+        let wordIndex = 0;
+
         // Parse map
         for (let r = 0; r < map.length; r++) {
             let row = [];
             for (let c = 0; c < map[r].length; c++) {
                 let char = map[r][c];
                 if (char === '#') row.push(1);
-                else if (char === '.') row.push(2);
+                else if (char === '.') {
+                    if (c % 6 === 0) {
+                        row.push({ type: 2, word: words[wordIndex], color: wordColors[wordIndex], charIndex: 0 });
+                        wordIndex = (wordIndex + 1) % words.length;
+                    } else {
+                        let prev = row[row.length - 1];
+                        if (prev && typeof prev === 'object' && prev.type === 2 && prev.charIndex < prev.word.length - 1) {
+                            row.push({ type: 2, word: prev.word, color: prev.color, charIndex: prev.charIndex + 1 });
+                        } else {
+                            row.push(2);
+                        }
+                    }
+                }
                 else if (char === 'o') row.push(3);
                 else row.push(0);
             }
-            row.push(1); // Right wall
+            row.push(1);
             grid.push(row);
         }
 
-        // Input Handler
         window.addEventListener('keydown', (e) => {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(e.key)) {
                 e.preventDefault();
@@ -116,7 +132,6 @@
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw Map
             for (let r = 0; r < grid.length; r++) {
                 for (let c = 0; c < grid[r].length; c++) {
                     let val = grid[r][c];
@@ -128,21 +143,27 @@
                         ctx.fillRect(x, y, tileSize, tileSize);
                         ctx.strokeStyle = '#333';
                         ctx.strokeRect(x, y, tileSize, tileSize);
-                    } else if (val === 2) {
-                        ctx.fillStyle = '#fff';
-                        ctx.beginPath();
-                        ctx.arc(x + tileSize/2, y + tileSize/2, 2, 0, Math.PI * 2);
-                        ctx.fill();
                     } else if (val === 3) {
                         ctx.fillStyle = '#ffdf00';
                         ctx.beginPath();
                         ctx.arc(x + tileSize/2, y + tileSize/2, 6, 0, Math.PI * 2);
                         ctx.fill();
+                    } else if (val && typeof val === 'object' && val.type === 2) {
+                        ctx.fillStyle = val.color;
+                        ctx.font = "bold 12px monospace";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        let letter = val.word[val.charIndex];
+                        ctx.fillText(letter, x + tileSize/2, y + tileSize/2);
+                    } else if (val === 2) {
+                        ctx.fillStyle = '#666';
+                        ctx.beginPath();
+                        ctx.arc(x + tileSize/2, y + tileSize/2, 2, 0, Math.PI * 2);
+                        ctx.fill();
                     }
                 }
             }
 
-            // Draw Pacman
             ctx.save();
             ctx.translate(pacman.x * tileSize + tileSize/2, pacman.y * tileSize + tileSize/2);
             ctx.rotate(pacman.angle);
@@ -156,7 +177,6 @@
             ctx.fill();
             ctx.restore();
 
-            // Draw Ghosts
             ghosts.forEach(g => {
                 ctx.save();
                 ctx.translate(g.x * tileSize + tileSize/2, g.y * tileSize + tileSize/2);
@@ -170,7 +190,6 @@
                 }
                 ctx.lineTo(-(tileSize/2 - 2), tileSize/2 - 2);
                 ctx.fill();
-                // Eyes
                 ctx.fillStyle = '#fff';
                 ctx.beginPath(); ctx.arc(-3, -2, 3, 0, Math.PI*2); ctx.fill();
                 ctx.beginPath(); ctx.arc(3, -2, 3, 0, Math.PI*2); ctx.fill();
@@ -182,7 +201,6 @@
         }
 
         function update() {
-            // Handle Input Buffer
             if (pacman.nextDx !== 0 || pacman.nextDy !== 0) {
                 let nextX = Math.round(pacman.x) + pacman.nextDx;
                 let nextY = Math.round(pacman.y) + pacman.nextDy;
@@ -194,8 +212,10 @@
                 }
             }
 
-            // Move Pacman
-            if (pacman.x % 1 === 0 && pacman.y % 1 === 0) {
+            let isCentered = Math.abs(pacman.x - Math.round(pacman.x)) < 0.01 && Math.abs(pacman.y - Math.round(pacman.y)) < 0.01;
+            if (isCentered) {
+                pacman.x = Math.round(pacman.x);
+                pacman.y = Math.round(pacman.y);
                 let nextX = pacman.x + pacman.dx;
                 let nextY = pacman.y + pacman.dy;
                 if (!grid[nextY] || grid[nextY][nextX] === 1) {
@@ -203,32 +223,30 @@
                 }
             }
             
-            pacman.x += pacman.dx * 0.1;
-            pacman.y += pacman.dy * 0.1;
+            pacman.x += pacman.dx * 0.2;
+            pacman.y += pacman.dy * 0.2;
 
-            // Eat Pellets
             let cx = Math.round(pacman.x);
             let cy = Math.round(pacman.y);
-            if (grid[cy] && grid[cy][cx] === 2) {
+            if (grid[cy] && grid[cy][cx] !== 1 && grid[cy][cx] !== 0) {
+                if (grid[cy][cx] === 2 || (grid[cy][cx] && grid[cy][cx].type === 2)) {
+                    score += 10;
+                } else if (grid[cy][cx] === 3) {
+                    score += 50;
+                }
                 grid[cy][cx] = 0;
-                score += 10;
-                scoreEl.innerText = score;
-            } else if (grid[cy] && grid[cy][cx] === 3) {
-                grid[cy][cx] = 0;
-                score += 50;
                 scoreEl.innerText = score;
             }
 
-            // Simple Ghost AI
             ghosts.forEach(g => {
-                if (g.x % 1 === 0 && g.y % 1 === 0) {
+                if (Math.abs(g.x - Math.round(g.x)) < 0.01 && Math.abs(g.y - Math.round(g.y)) < 0.01) {
+                    g.x = Math.round(g.x); g.y = Math.round(g.y);
                     let possible = [];
                     [[0,-1],[0,1],[-1,0],[1,0]].forEach(dir => {
                         if (grid[g.y+dir[1]] && grid[g.y+dir[1]][g.x+dir[0]] !== 1) {
                             possible.push(dir);
                         }
                     });
-                    // Don't reverse
                     let forward = possible.filter(d => !(d[0] === -g.dx && d[1] === -g.dy));
                     if (forward.length > 0) possible = forward;
                     
@@ -239,16 +257,15 @@
                         g.dx = 0; g.dy = 0;
                     }
                 }
-                g.x += g.dx * 0.05;
-                g.y += g.dy * 0.05;
+                g.x += g.dx * 0.1;
+                g.y += g.dy * 0.1;
             });
         }
 
-        // Game Loop
         setInterval(() => {
             update();
             draw();
-        }, 1000 / 60); // 60 FPS
+        }, 1000 / 60);
     </script>
 </body>
 </html>
